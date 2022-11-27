@@ -5,7 +5,7 @@ build:
 
 clean:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
-	rm *.out
+	rm user
 
 load:
 	sudo insmod os2.ko
@@ -16,5 +16,5 @@ unload:
 	sudo dmesg -c
 
 user:
-	g++ *.cpp
+	g++ *.cpp -o user
 
