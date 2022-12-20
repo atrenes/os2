@@ -91,16 +91,6 @@ static int __init mod_init(void) {
 	printk(KERN_INFO "os2 module loaded\n");
 	module_dir = debugfs_create_dir("os2", NULL);
 	module_file = debugfs_create_file("file", 0666, module_dir, NULL, &fops);
-	
-	//dev_t _devt = MKDEV(13, 32); // major and minor numbers 13 and 32 respectively (mouse0?)
-	/*
-	node = of_node_get(NULL);
-	node = of_root;
-	printk(KERN_INFO "%s", node->name);
-	
-	pochemy ono ne rabotaet ya tak bolshe ne mogy
-	*/
-	
 	return 0;
 }
 
