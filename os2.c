@@ -25,20 +25,19 @@ MODULE_VERSION("1.0");
 static struct dentry *module_dir;
 static struct dentry *module_file;
 static struct pci_dev *pci_device = NULL;
-static struct ppp_channel *ppp_chan = NULL;
+static struct ppp_channel ppp_chan;
 static void print_device(struct seq_file *file, struct pci_dev *pci_device);
 static int print_struct(struct seq_file *file, void *data);
 static void print_chan(struct seq_file *file, struct ppp_channel *ppp_chan);
 
 static ssize_t write_structures(struct file *file, const char __user *buffer, size_t length, loff_t *ptr_offset) {
-	printk(KERN_INFO "get arguments\n");
 	char user_data[BUFFER_SIZE];
 	unsigned int vendor_id, device_id;
 	copy_from_user(user_data, buffer, length);
 	sscanf(user_data, "vendor_id: %x, device_id: %x", &vendor_id, &device_id);
 	pci_device = pci_get_device(vendor_id, device_id, NULL);
 	
-	if (ppp_register_channel(ppp_chan) == 0) {
+	if (ppp_register_channel(&ppp_chan) == 0) {
 		printk(KERN_INFO "ppp_chan created");
 	} else {
 		printk(KERN_INFO "ppp_chan not created");
@@ -50,7 +49,7 @@ static ssize_t write_structures(struct file *file, const char __user *buffer, si
 
 static int print_struct(struct seq_file *file, void *data) {
     print_device(file, pci_device);
-    print_chan(file, ppp_chan);
+    print_chan(file, &ppp_chan);
     return 0;
 }
 
@@ -68,7 +67,7 @@ static void print_device(struct seq_file *file, struct pci_dev *pci_device) {
 
 static void print_chan(struct seq_file *file, struct ppp_channel *ppp_chan) {
 	if (ppp_chan == NULL) {
-		seq_printf(file, "ppp_channel* is NULL");
+		seq_printf(file, "ppp_channel* is NULL\n");
 	} else {
 		seq_printf(file, "ppp_channel struct : {\n");
 		seq_printf(file, "    speed: %d, \n", ppp_chan->speed);
@@ -79,6 +78,7 @@ static void print_chan(struct seq_file *file, struct ppp_channel *ppp_chan) {
 		} else {
 			seq_printf(file, "    ppp_name: %s \n", ppp_name);
 		}
+		seq_printf(file, "}\n");
 	}
 }
 
